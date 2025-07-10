@@ -141,7 +141,7 @@ endif()
 #  for the time being. This default will change to ON once this becomes
 #  commonly supported in browsers or the Emscripten team makes a single
 #  binary work everywhere.
-if (UNIX_OR_MAC_SYS AND NOT EMSCRIPTEN)
+if (BAREMETAL OR (UNIX_OR_MAC_SYS AND NOT EMSCRIPTEN))
   set(SDL_PTHREADS_DEFAULT ON)
 else()
   set(SDL_PTHREADS_DEFAULT OFF)
@@ -3023,6 +3023,21 @@ elseif(NGAGE)
       scdv
       gdi
   )
+elseif(BAREMETAL)  
+  set(SDL_THREAD_BAREMETAL 1)
+  set(SDL_THREAD_PTHREAD 1)
+  sdl_glob_sources(  
+    "${SDL3_SOURCE_DIR}/src/thread/pthread/SDL_sysmutex.c"
+    "${SDL3_SOURCE_DIR}/src/thread/pthread/SDL_syssem.c"
+    "${SDL3_SOURCE_DIR}/src/thread/pthread/SDL_systhread.c"
+    "${SDL3_SOURCE_DIR}/src/thread/generic/SDL_syscond.c"
+    "${SDL3_SOURCE_DIR}/src/thread/generic/SDL_sysrwlock.c"
+    "${SDL3_SOURCE_DIR}/src/thread/generic/SDL_systls.c"
+  )
+  set(HAVE_SDL_THREADS TRUE)
+  
+  # TODO
+  set(HAVE_SDL_TIMERS TRUE)
 endif()
 
 sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/SDL_dialog.c)
@@ -3090,7 +3105,7 @@ int main(void)
     return 0;
 }
 " HAVE_POSIX_SPAWN)
-  if(HAVE_POSIX_SPAWN)
+  if(HAVE_POSIX_SPAWN AND NOT BAREMETAL)
     sdl_glob_sources("${SDL3_SOURCE_DIR}/src/process/posix/*.c")
     set(SDL_PROCESS_POSIX 1)
     set(HAVE_SDL_PROCESS TRUE)

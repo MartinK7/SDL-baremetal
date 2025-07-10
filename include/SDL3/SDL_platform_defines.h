@@ -21,6 +21,10 @@
 
 /* WIKI CATEGORY: Platform */
 
+#ifdef __BAREMETAL__
+#define SDL_PLATFORM_BAREMETAL 1
+#endif
+
 /*
  * SDL_platform_defines.h tries to get a standard set of platform defines.
  */

@@ -476,6 +476,8 @@ static SDL_INLINE void *get_sdlapi_entry(const char *fname, const char *sym)
     return result;
 }
 
+#elif defined(SDL_PLATFORM_BAREMETAL)
+extern void *get_sdlapi_entry(const char *fname, const char *sym);
 #else
 #error Please define your platform.
 #endif
