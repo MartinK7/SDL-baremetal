@@ -597,5 +597,12 @@ const char *SDL_getenv_unsafe(const char *name)
 
 const char *SDL_getenv(const char *name)
 {
+#ifdef __BAREMETAL__
+	if(SDL_strncmp(name, "SDL_VIDEO_DRIVER", 16) == 0) {
+		return "dummy";
+	} else if(SDL_strncmp(name, "SDL_AUDIODRIVER", 15) == 0) {
+		return "dummy";
+	}
+#endif
     return SDL_GetEnvironmentVariable(SDL_GetEnvironment(), name);
 }
